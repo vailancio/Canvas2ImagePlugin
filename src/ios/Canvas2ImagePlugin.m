@@ -5,6 +5,9 @@
 //  Created by Tommy-Carlos Williams on 29/03/12.
 //  Copyright (c) 2012 Tommy-Carlos Williams. All rights reserved.
 //	MIT Licensed
+// 	
+// Forked by Vailancio Rodrigues
+// vailancio248@gmail.com
 //
 //Updated to return file path in success callback
 
@@ -23,12 +26,15 @@
 - (void)saveImageDataToLibrary:(CDVInvokedUrlCommand*)command
 {
     self.callbackId = command.callbackId;
-	NSData* imageData = [NSData dataFromBase64String:[command.arguments objectAtIndex:0]];
-	
-	UIImage* image = [[[UIImage alloc] initWithData:imageData] autorelease];
-	ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
+	NSData* imageData = [NSData cdv_dataFromBase64String:[command.arguments objectAtIndex:0]];
+    UIImage* image = [[[UIImage alloc] initWithData:imageData] autorelease];
+    
+    NSData* compressedImageData = UIImageJPEGRepresentation(image, 0.9);
+    UIImage* compressedImage = [[[UIImage alloc] initWithData:compressedImageData] autorelease];
+    
+    ALAssetsLibrary *library = [[ALAssetsLibrary alloc] init];
 
-    [library writeImageToSavedPhotosAlbum: image.CGImage metadata:nil completionBlock:^(NSURL *assetURL, NSError *error){
+    [library writeImageToSavedPhotosAlbum: compressedImage.CGImage metadata:nil completionBlock:^(NSURL *assetURL, NSError *error){
 		if (error)
 		{  
 			// Show error message...
